@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Browse Food{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-title mt-2">🍱 Browse Food Deals</div>
+    <p class="page-subtitle">Surplus food from restaurants near you at discounted prices</p>
+    <form method="GET" class="search-bar">
+        <input type="text" name="q" class="form-control" placeholder="🔍 Search food items..." value="{{ search }}">
+        <input type="text" name="location" class="form-control" placeholder="📍 Filter by location..." value="{{ location }}">
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Search</button>
+        {% if search or location %}<a href="{{ url_for('browse') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Clear</a>{% endif %}
+    </form>
+    {% if items %}
+    <div style="margin-bottom:1rem;color:var(--text-muted);font-size:0.9rem;">
+        <strong style="color:var(--text)">{{ items|length }}</strong> item{{ 's' if items|length != 1 }} available
+    </div>
+    <div class="items-grid">
+        {% for item in items %}
+        <div class="card item-card">
+            <span class="discount-badge"><i class="fas fa-percent"></i> {{ item.discount_percent|int }}% OFF</span>
+            {% if item.image_filename %}
+            <img class="card-img" src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="{{ item.name }}">
+            {% else %}
+            <div class="card-img-placeholder"><i class="fas fa-hamburger"></i></div>
+            {% endif %}
+            <div class="card-body">
+                <div class="item-name">{{ item.name }}</div>
+                <div class="item-desc">{{ item.description or 'Fresh surplus food.' }}</div>
+                <div class="price-row">
+                    <span class="price-original">₹{{ "%.2f"|format(item.original_price) }}</span>
+                    <span class="price-discounted">₹{{ "%.2f"|format(item.discounted_price) }}</span>
+                </div>
+                <div class="item-meta">
+                    <span class="tag tag-restaurant"><i class="fas fa-store"></i> {{ item.restaurant_name }}</span>
+                    {% if item.location %}<span class="tag tag-location"><i class="fas fa-map-marker-alt"></i> {{ item.location }}</span>{% endif %}
+                    {% if item.cuisine %}<span class="tag tag-cuisine">{{ item.cuisine }}</span>{% endif %}
+                    <span class="tag tag-qty"><i class="fas fa-box"></i> {{ item.quantity }} left</span>
+                    {% if item.expires_at %}<span class="tag tag-expires"><i class="fas fa-clock"></i> Expires {{ item.expires_at }}</span>{% endif %}
+                </div>
+                {% if session.get('role') == 'user' %}
+                <a href="{{ url_for('book_item', item_id=item.id) }}" class="btn btn-accent btn-sm btn-block"><i class="fas fa-shopping-bag"></i> Book Now</a>
+                {% elif not session.get('user_id') %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm btn-block"><i class="fas fa-sign-in-alt"></i> Login to Book</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon"><i class="fas fa-search"></i></div>
+        <h3>No Food Found</h3>
+        <p>Try different search terms or check back later.</p>
+        <a href="{{ url_for('browse') }}" class="btn btn-primary">Clear Filters</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

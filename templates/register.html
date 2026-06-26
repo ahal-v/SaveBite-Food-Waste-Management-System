@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card form-card">
+        <div style="text-align:center;margin-bottom:1.5rem;">
+            <div style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#16a34a,#84cc16);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.5rem;color:#fff;"><i class="fas fa-user-plus"></i></div>
+        </div>
+        <div class="auth-title">Create Account</div>
+        <div class="auth-subtitle">Join SaveBite as a food lover or restaurant owner</div>
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label">Register as</label>
+                <div class="role-toggle">
+                    <button type="button" class="role-btn active" onclick="setRole('user',this)"><i class="fas fa-user"></i> Food Lover</button>
+                    <button type="button" class="role-btn" onclick="setRole('restaurant',this)"><i class="fas fa-store"></i> Restaurant</button>
+                </div>
+                <input type="hidden" name="role" id="roleInput" value="user">
+            </div>
+            <div class="form-group"><label class="form-label">Full Name</label><input type="text" name="name" class="form-control" placeholder="John Doe" required></div>
+            <div class="form-group"><label class="form-label">Email Address</label><input type="email" name="email" class="form-control" placeholder="you@example.com" required></div>
+            <div class="form-group"><label class="form-label">Password</label><input type="password" name="password" class="form-control" placeholder="Min 6 characters" minlength="6" required></div>
+            <button type="submit" class="btn btn-primary btn-block mt-2"><i class="fas fa-rocket"></i> Create Account</button>
+        </form>
+        <hr class="divider">
+        <div class="auth-footer">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function setRole(role,btn){document.getElementById('roleInput').value=role;document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+</script>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Manage Users{% endblock %}{% block content %}
+<div class="container">
+    <div class="dashboard-header"><div><div class="page-title">👥 Manage Users</div><p class="page-subtitle">{{ users|length }} registered accounts</p></div><a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> Dashboard</a></div>
+    <div class="table-wrapper"><table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Action</th></tr></thead><tbody>
+        {% for user in users %}<tr>
+            <td class="text-muted" style="font-size:0.82rem;">{{ user.id }}</td>
+            <td><strong>{{ user.name }}</strong></td>
+            <td class="text-muted" style="font-size:0.88rem;">{{ user.email }}</td>
+            <td><span class="badge badge-{{ user.role }}">{{ user.role|capitalize }}</span></td>
+            <td class="text-muted" style="font-size:0.82rem;">{{ user.created_at[:10] }}</td>
+            <td>{% if user.role != 'admin' %}<form method="POST" action="{{ url_for('admin_delete_user', uid=user.id) }}" onsubmit="return confirm('Delete this user?')"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i> Delete</button></form>{% else %}<span class="text-muted" style="font-size:0.8rem;">Protected</span>{% endif %}</td>
+        </tr>{% endfor %}
+    </tbody></table></div>
+</div>{% endblock %}

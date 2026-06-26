@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}Manage Restaurants{% endblock %}{% block content %}
+<div class="container">
+    <div class="dashboard-header"><div><div class="page-title">🍽️ Manage Restaurants</div><p class="page-subtitle">{{ restaurants|length }} restaurants registered</p></div><a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> Dashboard</a></div>
+    <div class="table-wrapper"><table><thead><tr><th>#</th><th>Restaurant</th><th>Owner</th><th>Location</th><th>Cuisine</th><th>Status</th><th>Action</th></tr></thead><tbody>
+        {% for r in restaurants %}<tr>
+            <td class="text-muted" style="font-size:0.82rem;">{{ r.id }}</td>
+            <td><strong>{{ r.name }}</strong></td>
+            <td>{{ r.owner_name }}<div style="font-size:0.78rem;color:var(--text-muted);">{{ r.owner_email }}</div></td>
+            <td class="text-muted">{{ r.location or '—' }}</td>
+            <td class="text-muted">{{ r.cuisine or '—' }}</td>
+            <td><span class="badge badge-{{ r.status }}">{{ r.status|capitalize }}</span></td>
+            <td><form method="POST" action="{{ url_for('toggle_restaurant', rid=r.id) }}"><button class="btn btn-sm {{ 'btn-danger' if r.status == 'active' else 'btn-success' }}" type="submit"><i class="fas fa-{{ 'ban' if r.status == 'active' else 'check' }}"></i> {{ 'Deactivate' if r.status == 'active' else 'Activate' }}</button></form></td>
+        </tr>{% endfor %}
+    </tbody></table></div>
+</div>{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Manage Listings{% endblock %}
+{% block content %}
+<div class="dash-wrapper">
+  <aside class="sidebar">
+    <div class="sidebar-logo">🍽️ Restaurant</div>
+    <div class="sidebar-label">Overview</div>
+    <a href="{{ url_for('restaurant_dashboard') }}"><span class="icon">📊</span> Dashboard</a>
+    <div class="sidebar-label">Food</div>
+    <a href="{{ url_for('restaurant_add_food') }}"><span class="icon">➕</span> Add Food</a>
+    <a href="{{ url_for('restaurant_manage_food') }}" class="active"><span class="icon">🥡</span> Manage Listings</a>
+    <a href="{{ url_for('restaurant_bookings') }}"><span class="icon">📋</span> Bookings</a>
+    <div class="sidebar-label">Account</div>
+    <a href="{{ url_for('logout') }}"><span class="icon">🚪</span> Logout</a>
+  </aside>
+  <main class="dash-main">
+    <div class="dash-header" style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <h1>My Food Listings</h1>
+        <p>{{ foods|length }} item{{ 's' if foods|length != 1 }}</p>
+      </div>
+      <a href="{{ url_for('restaurant_add_food') }}" class="btn btn-primary">➕ Add Item</a>
+    </div>
+
+    {% if foods %}
+    <div class="food-grid">
+      {% for food in foods %}
+      <div class="food-card">
+        {% if food.image_filename %}
+          <img src="{{ url_for('static', filename='uploads/' ~ food.image_filename) }}" alt="{{ food.name }}" class="food-card-img"/>
+        {% else %}
+          <div class="food-card-img-placeholder">🍱</div>
+        {% endif %}
+        <div class="food-card-body">
+          <div class="d-flex justify-between align-center mb-1">
+            <h3>{{ food.name }}</h3>
+            {% if food.is_available and food.quantity > 0 %}<span class="badge badge-green">Live</span>
+            {% else %}<span class="badge badge-red">Unavailable</span>{% endif %}
+          </div>
+          {% if food.description %}<p class="description">{{ food.description }}</p>{% endif %}
+          <div class="price-row">
+            <span class="price-original">₹{{ "%.2f"|format(food.original_price) }}</span>
+            <span class="price-discounted">₹{{ "%.2f"|format(food.discounted_price) }}</span>
+          </div>
+          <div class="qty-badge">📦 {{ food.quantity }} left {% if food.availability_time %}· ⏰ {{ food.availability_time }}{% endif %}</div>
+          <div class="d-flex gap-1 mt-1">
+            <a href="{{ url_for('restaurant_edit_food', fid=food.id) }}" class="btn btn-secondary btn-sm" style="flex:1;">✏️ Edit</a>
+            <form method="POST" action="{{ url_for('restaurant_delete_food', fid=food.id) }}" class="confirm-delete" style="flex:1;">
+              <button type="submit" class="btn btn-danger btn-sm btn-block">🗑️ Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="icon">🥡</div>
+        <h3>No food listings yet</h3>
+        <p>Upload your first leftover food item to get started.</p>
+        <a href="{{ url_for('restaurant_add_food') }}" class="btn btn-primary mt-2">➕ Add Food Item</a>
+      </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

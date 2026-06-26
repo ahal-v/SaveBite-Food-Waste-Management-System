@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Manage Shops{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <div>
+            <div class="page-title">🏬 Manage Shops</div>
+            <p class="page-subtitle">{{ shops|length }} registered shops</p>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> Dashboard</a>
+    </div>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr><th>#</th><th>Shop Name</th><th>Owner</th><th>Location</th><th>Phone</th><th>Status</th><th>Registered</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                {% for shop in shops %}
+                <tr>
+                    <td class="text-muted" style="font-size:0.82rem;">{{ shop.id }}</td>
+                    <td><strong>{{ shop.name }}</strong>
+                        {% if shop.description %}<div style="font-size:0.78rem;color:var(--text-muted);">{{ shop.description[:40] }}{% if shop.description|length > 40 %}…{% endif %}</div>{% endif %}
+                    </td>
+                    <td>{{ shop.owner_name }}<div style="font-size:0.78rem;color:var(--text-muted);">{{ shop.owner_email }}</div></td>
+                    <td class="text-muted">{{ shop.location or '—' }}</td>
+                    <td class="text-muted">{{ shop.phone or '—' }}</td>
+                    <td><span class="badge badge-{{ shop.status }}">{{ shop.status|capitalize }}</span></td>
+                    <td class="text-muted" style="font-size:0.82rem;">{{ shop.created_at[:10] }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('toggle_shop', shop_id=shop.id) }}">
+                            <button class="btn btn-sm {{ 'btn-danger' if shop.status == 'active' else 'btn-success' }}" type="submit">
+                                <i class="fas fa-{{ 'ban' if shop.status == 'active' else 'check' }}"></i>
+                                {{ 'Deactivate' if shop.status == 'active' else 'Activate' }}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Add Item{% endblock %}
+{% block content %}
+<div class="container-sm" style="max-width:640px;padding-top:2rem;">
+    <div class="page-title">➕ Add New Item</div>
+    <p class="page-subtitle">List an item from {{ shop.name }} at a discounted price</p>
+    <div class="form-card">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="form-label">Item Name *</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g. Samsung 32-inch TV" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="3" placeholder="Describe the item's condition, specs, etc."></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Original Price (₹) *</label>
+                    <input type="number" name="original_price" id="origPrice" class="form-control" placeholder="5000" min="1" step="0.01" required oninput="calcDiscount()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Discount % *</label>
+                    <input type="number" name="discount_percent" id="discPct" class="form-control" placeholder="30" min="1" max="99" step="0.1" required oninput="calcDiscount()">
+                </div>
+            </div>
+            <div class="alert alert-info" style="margin-bottom:1rem;" id="pricePreview" style="display:none;">
+                <i class="fas fa-tag"></i>
+                Discounted Price: <strong id="dpDisplay">—</strong>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Quantity Available *</label>
+                <input type="number" name="quantity" class="form-control" placeholder="1" min="1" value="1" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Item Image</label>
+                <input type="file" name="image" class="form-control" accept="image/*" id="imgInput" onchange="previewImg(event)">
+                <div class="form-hint">PNG, JPG, WEBP – Max 16MB</div>
+                <img id="imgPreview" src="" alt="" style="display:none;margin-top:0.75rem;width:100%;max-height:200px;object-fit:cover;border-radius:10px;">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-2">
+                <i class="fas fa-upload"></i> Upload Item
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function calcDiscount() {
+    const orig = parseFloat(document.getElementById('origPrice').value);
+    const pct = parseFloat(document.getElementById('discPct').value);
+    if (!isNaN(orig) && !isNaN(pct)) {
+        const dp = (orig * (1 - pct / 100)).toFixed(2);
+        document.getElementById('dpDisplay').textContent = '₹' + dp;
+        document.getElementById('pricePreview').style.display = 'block';
+    }
+}
+function previewImg(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = ev => {
+            const img = document.getElementById('imgPreview');
+            img.src = ev.target.result;
+            img.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+{% endblock %}

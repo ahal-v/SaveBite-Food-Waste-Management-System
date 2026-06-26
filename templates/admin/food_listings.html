@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Food Listings{% endblock %}
+{% block content %}
+<div class="dash-wrapper">
+  <aside class="sidebar">
+    <div class="sidebar-logo">🛠️ Admin Panel</div>
+    <div class="sidebar-label">Overview</div>
+    <a href="{{ url_for('admin_dashboard') }}"><span class="icon">📊</span> Dashboard</a>
+    <div class="sidebar-label">Manage</div>
+    <a href="{{ url_for('admin_users') }}"><span class="icon">👤</span> Users</a>
+    <a href="{{ url_for('admin_restaurants') }}"><span class="icon">🍽️</span> Restaurants</a>
+    <a href="{{ url_for('admin_food_listings') }}" class="active"><span class="icon">🥡</span> Food Listings</a>
+    <a href="{{ url_for('admin_bookings') }}"><span class="icon">📋</span> Bookings</a>
+    <div class="sidebar-label">Account</div>
+    <a href="{{ url_for('logout') }}"><span class="icon">🚪</span> Logout</a>
+  </aside>
+  <main class="dash-main">
+    <div class="dash-header">
+      <h1>Food Listings</h1>
+      <p>All food items across all restaurants</p>
+    </div>
+    <div class="card">
+      {% if foods %}
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>#</th><th>Food Item</th><th>Restaurant</th><th>Original</th><th>Discounted</th><th>Qty</th><th>Status</th><th>Posted</th></tr></thead>
+          <tbody>
+            {% for f in foods %}
+            <tr>
+              <td>{{ f.id }}</td>
+              <td class="fw-bold">{{ f.name }}</td>
+              <td class="text-muted">{{ f.restaurant_name }}</td>
+              <td class="text-muted"><s>₹{{ "%.2f"|format(f.original_price) }}</s></td>
+              <td class="text-primary fw-bold">₹{{ "%.2f"|format(f.discounted_price) }}</td>
+              <td>{{ f.quantity }}</td>
+              <td>
+                {% if f.is_available and f.quantity > 0 %}<span class="badge badge-green">Available</span>
+                {% else %}<span class="badge badge-red">Unavailable</span>{% endif %}
+              </td>
+              <td class="text-muted">{{ f.created_at[:10] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <div class="empty-state"><div class="icon">🥡</div><h3>No food listings yet</h3><p>Food items will appear here once restaurants add them.</p></div>
+      {% endif %}
+    </div>
+  </main>
+</div>
+{% endblock %}

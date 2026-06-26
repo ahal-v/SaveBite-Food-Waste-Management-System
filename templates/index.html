@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="marquee-section">
+    <div class="marquee-track">
+        {% for label in ['Reduce Food Waste', 'Save Money', 'Help the Planet', 'Fresh Deals Daily', 'Up to 70% Off', 'Surplus Food Near You', 'Reduce Food Waste', 'Save Money', 'Help the Planet', 'Fresh Deals Daily', 'Up to 70% Off', 'Surplus Food Near You'] %}
+        <span class="marquee-item"><i class="fas fa-leaf"></i> {{ label }}</span>
+        {% endfor %}
+    </div>
+</div>
+
+<section class="hero">
+    <div class="hero-badge"><i class="fas fa-seedling"></i> Fight Food Waste Together</div>
+    <h1>Rescue Surplus Food,<br><span>Save Money & the Planet</span></h1>
+    <p>SaveBite connects you with restaurants selling surplus food at discounted prices — reducing waste while giving you amazing deals on fresh food.</p>
+    <div class="hero-btns">
+        <a href="{{ url_for('browse') }}" class="btn btn-primary"><i class="fas fa-utensils"></i> Find Food Near Me</a>
+        {% if not session.get('user_id') %}
+        <a href="{{ url_for('register') }}" class="btn btn-ghost"><i class="fas fa-user-plus"></i> Join Free</a>
+        {% endif %}
+    </div>
+</section>
+
+<section style="padding:3rem 1.5rem;background:rgba(255,255,255,0.02);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="container">
+        <h2 style="text-align:center;margin-bottom:0.5rem;">How SaveBite Works</h2>
+        <p style="text-align:center;color:var(--text-muted);margin-bottom:2.5rem;">Three simple steps to reduce waste and save money</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;">
+            {% for step in [
+                ('1','fas fa-store','#16a34a','Restaurants List Surplus','Restaurants upload leftover food with discounts at closing time.'),
+                ('2','fas fa-search','#f97316','Users Browse Deals','Find available food nearby and pick what you want.'),
+                ('3','fas fa-check-circle','#3b82f6','Book & Collect','Book instantly and collect from the restaurant.')
+            ] %}
+            <div class="card card-body" style="text-align:center;">
+                <div style="width:60px;height:60px;border-radius:50%;background:{{ step[2] }}22;border:2px solid {{ step[2] }}44;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.5rem;color:{{ step[2] }};">
+                    <i class="{{ step[1] }}"></i>
+                </div>
+                <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">Step {{ step[0] }}</div>
+                <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">{{ step[3] }}</h3>
+                <p style="font-size:0.88rem;color:var(--text-muted);">{{ step[4] }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="container" style="padding-top:3rem;padding-bottom:3rem;">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">🍱 Available Now</h2>
+            <p class="text-muted" style="font-size:0.9rem;">Fresh surplus food at discounted prices</p>
+        </div>
+        <a href="{{ url_for('browse') }}" class="btn btn-ghost btn-sm">View All <i class="fas fa-arrow-right"></i></a>
+    </div>
+    {% if featured %}
+    <div class="items-grid">
+        {% for item in featured %}
+        <div class="card item-card">
+            <span class="discount-badge"><i class="fas fa-percent"></i> {{ item.discount_percent|int }}% OFF</span>
+            {% if item.image_filename %}
+            <img class="card-img" src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="{{ item.name }}">
+            {% else %}
+            <div class="card-img-placeholder"><i class="fas fa-hamburger"></i></div>
+            {% endif %}
+            <div class="card-body">
+                <div class="item-name">{{ item.name }}</div>
+                <div class="item-desc">{{ item.description or 'Freshly prepared surplus food.' }}</div>
+                <div class="price-row">
+                    <span class="price-original">₹{{ "%.2f"|format(item.original_price) }}</span>
+                    <span class="price-discounted">₹{{ "%.2f"|format(item.discounted_price) }}</span>
+                </div>
+                <div class="item-meta">
+                    <span class="tag tag-restaurant"><i class="fas fa-store"></i> {{ item.restaurant_name }}</span>
+                    {% if item.location %}<span class="tag tag-location"><i class="fas fa-map-marker-alt"></i> {{ item.location }}</span>{% endif %}
+                    {% if item.cuisine %}<span class="tag tag-cuisine">{{ item.cuisine }}</span>{% endif %}
+                    <span class="tag tag-qty"><i class="fas fa-box"></i> {{ item.quantity }} left</span>
+                </div>
+                {% if session.get('role') == 'user' %}
+                <a href="{{ url_for('book_item', item_id=item.id) }}" class="btn btn-accent btn-sm btn-block"><i class="fas fa-shopping-bag"></i> Book Now</a>
+                {% elif not session.get('user_id') %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm btn-block"><i class="fas fa-sign-in-alt"></i> Login to Book</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon"><i class="fas fa-utensils"></i></div>
+        <h3>No Food Listed Yet</h3>
+        <p>Restaurants are getting ready. Check back soon!</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

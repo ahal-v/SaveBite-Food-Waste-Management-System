@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Add Food Item{% endblock %}
+{% block content %}
+<div class="container-sm" style="max-width:640px;padding-top:2rem;">
+    <div class="page-title">➕ Add Surplus Food</div>
+    <p class="page-subtitle">List leftover food from {{ restaurant.name }} at a discounted price</p>
+    <div class="form-card">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group"><label class="form-label">Food Item Name *</label><input type="text" name="name" class="form-control" placeholder="e.g. Butter Chicken Meal" required></div>
+            <div class="form-group"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2" placeholder="Describe the food item..."></textarea></div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Original Price (₹) *</label><input type="number" name="original_price" id="origPrice" class="form-control" placeholder="250" min="1" step="0.01" required oninput="calcDiscount()"></div>
+                <div class="form-group"><label class="form-label">Discount % *</label><input type="number" name="discount_percent" id="discPct" class="form-control" placeholder="40" min="1" max="99" step="1" required oninput="calcDiscount()"></div>
+            </div>
+            <div class="alert alert-info mb-2" id="pricePreview" style="display:none;"><i class="fas fa-tag"></i> Discounted Price: <strong id="dpDisplay">—</strong></div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Quantity *</label><input type="number" name="quantity" class="form-control" placeholder="5" min="1" value="1" required></div>
+                <div class="form-group"><label class="form-label">Expires At (optional)</label><input type="text" name="expires_at" class="form-control" placeholder="e.g. 10:00 PM today"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Food Image</label>
+                <input type="file" name="image" class="form-control" accept="image/*" id="imgInput" onchange="previewImg(event)">
+                <div class="form-hint">PNG, JPG, WEBP – Max 16MB</div>
+                <img id="imgPreview" src="" alt="" style="display:none;margin-top:0.75rem;width:100%;max-height:200px;object-fit:cover;border-radius:10px;">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-2"><i class="fas fa-upload"></i> List Food Item</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function calcDiscount(){const o=parseFloat(document.getElementById('origPrice').value),p=parseFloat(document.getElementById('discPct').value);if(!isNaN(o)&&!isNaN(p)){document.getElementById('dpDisplay').textContent='₹'+(o*(1-p/100)).toFixed(2);document.getElementById('pricePreview').style.display='block';}}
+function previewImg(e){const f=e.target.files[0];if(f){const r=new FileReader();r.onload=ev=>{const i=document.getElementById('imgPreview');i.src=ev.target.result;i.style.display='block';};r.readAsDataURL(f);}}
+</script>
+{% endblock %}

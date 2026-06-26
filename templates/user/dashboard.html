@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <div>
+            <div class="page-title">👋 Hello, {{ session.name }}!</div>
+            <div class="dash-welcome">Here's your SaveBite activity summary.</div>
+        </div>
+        <a href="{{ url_for('browse') }}" class="btn btn-primary"><i class="fas fa-utensils"></i> Find Food</a>
+    </div>
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon" style="color:#16a34a;">🎟️</div><div class="stat-value">{{ bookings|length }}</div><div class="stat-label">Total Bookings</div></div>
+        <div class="stat-card"><div class="stat-icon" style="color:#f59e0b;">⏳</div><div class="stat-value">{{ bookings|selectattr('status','equalto','pending')|list|length }}</div><div class="stat-label">Pending</div></div>
+        <div class="stat-card"><div class="stat-icon" style="color:#22c55e;">✅</div><div class="stat-value">{{ bookings|selectattr('status','equalto','confirmed')|list|length }}</div><div class="stat-label">Confirmed</div></div>
+        <div class="stat-card"><div class="stat-icon" style="color:#ef4444;">❌</div><div class="stat-value">{{ bookings|selectattr('status','equalto','cancelled')|list|length }}</div><div class="stat-label">Cancelled</div></div>
+    </div>
+    <div class="section-header">
+        <h2 class="section-title">Recent Bookings</h2>
+        <a href="{{ url_for('user_bookings') }}" class="btn btn-ghost btn-sm">View All</a>
+    </div>
+    {% if bookings %}
+    <div class="table-wrapper">
+        <table><thead><tr><th>Food</th><th>Restaurant</th><th>Price</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>
+            {% for b in bookings[:5] %}
+            <tr>
+                <td><div style="display:flex;align-items:center;gap:10px;">
+                    {% if b.image_filename %}<img class="td-img" src="{{ url_for('static',filename='uploads/'+b.image_filename) }}" alt="">
+                    {% else %}<div class="td-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:1.2rem;"><i class="fas fa-hamburger"></i></div>{% endif %}
+                    <strong>{{ b.food_name }}</strong></div></td>
+                <td>{{ b.restaurant_name }}</td>
+                <td class="text-accent fw-bold">₹{{ "%.2f"|format(b.discounted_price * b.quantity) }}</td>
+                <td><span class="badge badge-{{ b.status }}">{{ b.status|capitalize }}</span></td>
+                <td class="text-muted" style="font-size:0.82rem;">{{ b.booked_at[:10] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody></table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon"><i class="fas fa-shopping-bag"></i></div>
+        <h3>No Bookings Yet</h3>
+        <p>Browse available surplus food and make your first booking!</p>
+        <a href="{{ url_for('browse') }}" class="btn btn-primary">Browse Food</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

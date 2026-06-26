@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Customer Orders{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <div><div class="page-title">🎟️ Customer Orders</div><p class="page-subtitle">Bookings for {{ restaurant.name if restaurant else 'your restaurant' }}</p></div>
+        <a href="{{ url_for('restaurant_dashboard') }}" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> Dashboard</a>
+    </div>
+    {% if bookings %}
+    <div class="table-wrapper">
+        <table><thead><tr><th>Food</th><th>Customer</th><th>Email</th><th>Qty</th><th>Total</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+        <tbody>
+            {% for b in bookings %}
+            <tr>
+                <td><strong>{{ b.food_name }}</strong></td>
+                <td>{{ b.user_name }}</td>
+                <td class="text-muted" style="font-size:0.82rem;">{{ b.user_email }}</td>
+                <td>{{ b.quantity }}</td>
+                <td class="text-accent fw-bold">₹{{ "%.2f"|format(b.total_price) }}</td>
+                <td><span class="badge badge-{{ b.status }}">{{ b.status|capitalize }}</span></td>
+                <td class="text-muted" style="font-size:0.82rem;">{{ b.booked_at[:10] }}</td>
+                <td>{% if b.status == 'pending' %}
+                    <form method="POST" action="{{ url_for('confirm_booking', booking_id=b.id) }}">
+                        <button class="btn btn-success btn-sm" type="submit"><i class="fas fa-check"></i> Confirm</button>
+                    </form>
+                    {% else %}<span class="text-muted" style="font-size:0.82rem;">—</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody></table>
+    </div>
+    {% else %}
+    <div class="empty-state"><div class="empty-icon"><i class="fas fa-ticket-alt"></i></div><h3>No Orders Yet</h3><p>Customers haven't booked any food yet.</p></div>
+    {% endif %}
+</div>
+{% endblock %}

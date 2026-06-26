@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}Manage Listings{% endblock %}{% block content %}
+<div class="container">
+    <div class="dashboard-header"><div><div class="page-title">🍱 Manage Listings</div><p class="page-subtitle">{{ items|length }} food items across all restaurants</p></div><a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> Dashboard</a></div>
+    <div class="table-wrapper"><table><thead><tr><th>Img</th><th>Name</th><th>Restaurant</th><th>Original</th><th>Disc%</th><th>Final</th><th>Qty</th><th>Status</th><th>Action</th></tr></thead><tbody>
+        {% for item in items %}<tr>
+            <td>{% if item.image_filename %}<img class="td-img" src="{{ url_for('static',filename='uploads/'+item.image_filename) }}" alt="">{% else %}<div class="td-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);"><i class="fas fa-hamburger"></i></div>{% endif %}</td>
+            <td><strong>{{ item.name }}</strong></td>
+            <td>{{ item.restaurant_name }}<div style="font-size:0.78rem;color:var(--text-muted);">{{ item.location or '' }}</div></td>
+            <td class="text-muted">₹{{ "%.2f"|format(item.original_price) }}</td>
+            <td><span class="badge badge-pending">{{ item.discount_percent|int }}%</span></td>
+            <td class="text-accent fw-bold">₹{{ "%.2f"|format(item.discounted_price) }}</td>
+            <td>{{ item.quantity }}</td>
+            <td><span class="badge badge-{{ item.status }}">{{ item.status|capitalize }}</span></td>
+            <td><form method="POST" action="{{ url_for('admin_delete_item',item_id=item.id) }}" onsubmit="return confirm('Remove?')"><button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button></form></td>
+        </tr>{% endfor %}
+    </tbody></table></div>
+</div>{% endblock %}

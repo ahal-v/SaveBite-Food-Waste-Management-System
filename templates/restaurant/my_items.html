@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}My Food Listings{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <div><div class="page-title">🍱 My Food Listings</div><p class="page-subtitle">Manage your surplus food items</p></div>
+        <a href="{{ url_for('add_food') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Food</a>
+    </div>
+    {% if items %}
+    <div class="table-wrapper">
+        <table><thead><tr><th>Image</th><th>Name</th><th>Original</th><th>Discount</th><th>Price</th><th>Qty</th><th>Expires</th><th>Status</th><th>Remove</th></tr></thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{% if item.image_filename %}<img class="td-img" src="{{ url_for('static',filename='uploads/'+item.image_filename) }}" alt="">
+                {% else %}<div class="td-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:1.2rem;"><i class="fas fa-hamburger"></i></div>{% endif %}</td>
+                <td><strong>{{ item.name }}</strong>{% if item.description %}<div style="font-size:0.78rem;color:var(--text-muted);">{{ item.description[:50] }}{% if item.description|length > 50 %}…{% endif %}</div>{% endif %}</td>
+                <td class="text-muted">₹{{ "%.2f"|format(item.original_price) }}</td>
+                <td><span class="badge badge-pending">{{ item.discount_percent|int }}% OFF</span></td>
+                <td class="text-accent fw-bold">₹{{ "%.2f"|format(item.discounted_price) }}</td>
+                <td>{{ item.quantity }}</td>
+                <td class="text-muted" style="font-size:0.82rem;">{{ item.expires_at or '—' }}</td>
+                <td><span class="badge badge-{{ item.status }}">{{ item.status|capitalize }}</span></td>
+                <td><form method="POST" action="{{ url_for('delete_food', item_id=item.id) }}" onsubmit="return confirm('Remove this item?')">
+                    <button class="btn btn-danger btn-sm" type="submit"><i class="fas fa-trash"></i></button>
+                </form></td>
+            </tr>
+            {% endfor %}
+        </tbody></table>
+    </div>
+    {% else %}
+    <div class="empty-state"><div class="empty-icon"><i class="fas fa-hamburger"></i></div><h3>No Food Listed Yet</h3><p>Add surplus food items to start reducing waste and earning!</p><a href="{{ url_for('add_food') }}" class="btn btn-primary">Add Food Item</a></div>
+    {% endif %}
+</div>
+{% endblock %}

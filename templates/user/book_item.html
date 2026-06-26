@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Book Food{% endblock %}
+{% block content %}
+<div class="container-sm" style="max-width:640px;margin-top:2rem;">
+    <a href="{{ url_for('browse') }}" class="btn btn-ghost btn-sm mb-2"><i class="fas fa-arrow-left"></i> Back</a>
+    <div class="form-card">
+        <div style="display:flex;gap:1.5rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+            {% if item.image_filename %}
+            <img src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="{{ item.name }}" style="width:120px;height:120px;object-fit:cover;border-radius:12px;flex-shrink:0;">
+            {% else %}
+            <div style="width:120px;height:120px;border-radius:12px;background:var(--dark-3);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--text-muted);flex-shrink:0;"><i class="fas fa-hamburger"></i></div>
+            {% endif %}
+            <div><div style="font-size:1.3rem;font-weight:700;margin-bottom:0.5rem;">{{ item.name }}</div>
+            <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:0.75rem;">{{ item.description or '' }}</p>
+            <div class="price-row">
+                <span class="price-original">₹{{ "%.2f"|format(item.original_price) }}</span>
+                <span class="price-discounted">₹{{ "%.2f"|format(item.discounted_price) }}</span>
+                <span class="discount-badge" style="position:static;">{{ item.discount_percent|int }}% OFF</span>
+            </div></div>
+        </div>
+        <hr class="divider">
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem;">
+            <span class="tag tag-restaurant"><i class="fas fa-store"></i> {{ item.restaurant_name }}</span>
+            {% if item.location %}<span class="tag tag-location"><i class="fas fa-map-marker-alt"></i> {{ item.location }}</span>{% endif %}
+            {% if item.phone %}<span class="tag" style="background:rgba(255,255,255,0.05);color:var(--text-muted);"><i class="fas fa-phone"></i> {{ item.phone }}</span>{% endif %}
+            <span class="tag tag-qty"><i class="fas fa-box"></i> {{ item.quantity }} available</span>
+        </div>
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label">Quantity</label>
+                <input type="number" name="quantity" class="form-control" value="1" min="1" max="{{ item.quantity }}" id="qtyInput" oninput="updateTotal()">
+                <div class="form-hint">Max: {{ item.quantity }} portions</div>
+            </div>
+            <div class="alert alert-info" style="margin-bottom:1rem;">
+                <i class="fas fa-calculator"></i>
+                Total: <strong id="totalDisplay">₹{{ "%.2f"|format(item.discounted_price) }}</strong>
+                <span style="opacity:0.7;">(₹{{ "%.2f"|format(item.discounted_price) }} × <span id="qtyDisplay">1</span>)</span>
+            </div>
+            <button type="submit" class="btn btn-accent btn-block"><i class="fas fa-check-circle"></i> Confirm Booking</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const ppu={{ item.discounted_price }};
+function updateTotal(){const q=parseInt(document.getElementById('qtyInput').value)||1;document.getElementById('qtyDisplay').textContent=q;document.getElementById('totalDisplay').textContent='₹'+(ppu*q).toFixed(2);}
+</script>
+{% endblock %}

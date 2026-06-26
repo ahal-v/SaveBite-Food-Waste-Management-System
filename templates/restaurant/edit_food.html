@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Edit Food Item{% endblock %}
+{% block content %}
+<div class="dash-wrapper">
+  <aside class="sidebar">
+    <div class="sidebar-logo">🍽️ Restaurant</div>
+    <div class="sidebar-label">Overview</div>
+    <a href="{{ url_for('restaurant_dashboard') }}"><span class="icon">📊</span> Dashboard</a>
+    <div class="sidebar-label">Food</div>
+    <a href="{{ url_for('restaurant_add_food') }}"><span class="icon">➕</span> Add Food</a>
+    <a href="{{ url_for('restaurant_manage_food') }}" class="active"><span class="icon">🥡</span> Manage Listings</a>
+    <a href="{{ url_for('restaurant_bookings') }}"><span class="icon">📋</span> Bookings</a>
+    <div class="sidebar-label">Account</div>
+    <a href="{{ url_for('logout') }}"><span class="icon">🚪</span> Logout</a>
+  </aside>
+  <main class="dash-main">
+    <div class="dash-header">
+      <h1>Edit Listing</h1>
+      <p>Update the details for <strong>{{ food.name }}</strong></p>
+    </div>
+    <div class="card" style="max-width:640px;">
+      <form method="POST" action="{{ url_for('restaurant_edit_food', fid=food.id) }}" enctype="multipart/form-data">
+        <div class="form-group">
+          <label class="form-label">Food Name *</label>
+          <input type="text" name="name" class="form-control" value="{{ food.name }}" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea name="description" class="form-control" rows="3">{{ food.description or '' }}</textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Original Price (₹) *</label>
+            <input type="number" name="original_price" class="form-control" value="{{ food.original_price }}" step="0.01" min="1" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Discounted Price (₹) *</label>
+            <input type="number" name="discounted_price" class="form-control" value="{{ food.discounted_price }}" step="0.01" min="1" required/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Quantity *</label>
+            <input type="number" name="quantity" class="form-control" value="{{ food.quantity }}" min="0" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Available Until</label>
+            <input type="text" name="availability_time" class="form-control" value="{{ food.availability_time or '' }}" placeholder="e.g. 8:00 PM today"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:flex;align-items:center;gap:.6rem;cursor:pointer;">
+            <input type="checkbox" name="is_available" {% if food.is_available %}checked{% endif %} style="accent-color:var(--primary);width:16px;height:16px;"/>
+            Mark as Available
+          </label>
+        </div>
+        {% if food.image_filename %}
+        <div class="form-group">
+          <label class="form-label">Current Image</label>
+          <img src="{{ url_for('static', filename='uploads/' ~ food.image_filename) }}" alt="Current" style="max-height:120px;border-radius:8px;margin-bottom:.5rem;"/>
+        </div>
+        {% endif %}
+        <div class="form-group">
+          <label class="form-label">Update Image <span class="text-muted">(optional)</span></label>
+          <div class="file-dropzone">
+            <input type="file" name="image" id="foodImage" accept="image/*"/>
+            <div class="icon">📷</div>
+            <p>Click or drag & drop to replace image</p>
+            <img id="imagePreview" src="" alt="" style="display:none;max-height:120px;margin:.8rem auto 0;border-radius:8px;"/>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-2">
+          <a href="{{ url_for('restaurant_manage_food') }}" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary" style="flex:1;">💾 Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{% endblock %}
