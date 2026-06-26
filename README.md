@@ -31,6 +31,17 @@ py app.py
 Ahal V
 B.Tech Information Technology Student
 
+
+## Features
+- User Registration & Login
+- Restaurant Food Listing
+- Browse Available Food
+- Food Booking System
+- SQLite Database Integration
+- Responsive UI
+
+## Screenshots
+
 <img width="1520" height="725" alt="Screenshot 2026-06-26 194638" src="https://github.com/user-attachments/assets/9cbcd55e-0930-4209-a85f-9b6d53310e91" />
 <img width="1532" height="727" alt="Screenshot 2026-06-26 194550" src="https://github.com/user-attachments/assets/85025165-95ba-4f2d-8e86-dafbca1bdd9c" />
 <img width="1522" height="728" alt="Screenshot 2026-06-26 194519" src="https://github.com/user-attachments/assets/c71edcfb-cd8e-4489-8d92-bb53ad4cb459" />
